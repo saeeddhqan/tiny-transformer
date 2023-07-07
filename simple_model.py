@@ -18,7 +18,7 @@ drop_prob = 0.15
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 torch.manual_seed(1234)
 
-with open('input.txt') as fp:
+with open('shakespeare.txt') as fp:
 	text = fp.read()
 
 chars = sorted(list(set(text)))
