@@ -45,25 +45,6 @@ def get_batch(split='train', block_size=block_size, batch_size=batch_size):
 	y = torch.stack([data[i+1:i + block_size + 1] for i in ix])
 	return x, y
 
-@torch.no_grad()
-def estimate_loss():
-	'''
-		We select eval_iters chunks from both train and val data
-		and save their losses. All in all, evaluating the perf
-		of the model on train and test data.
-	'''
-	out = {}
-	for split in ('train', 'test'):
-		# A tensor to capture the losses
-		losses = torch.zeros(eval_iters)
-		for k in range(eval_iters):
-			X, Y = get_batch(split)
-			logits, loss = model(X, Y)
-			losses[k] = loss.item()
-		out[split] = losses.mean()
-	return out
-
-
 class head(nn.Module):
 	'''
 		Communication between tokens happen here.
