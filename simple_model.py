@@ -64,7 +64,7 @@ class head(nn.Module):
 		# What do I have?
 		k = self.key(x)
 		# What is the representation value of me?
-		# Or: what's my personality in the group?
+		# Or: what's my personality in a group?
 		# Or: what mask do I have when I'm in a group?
 		v = self.value(x)
 		scores = q @ k.transpose(-2, -1) * (1 / math.sqrt(C)) # (B,T,head_size) @ (B,head_size,T) --> (B,T,T)
