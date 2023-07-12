@@ -49,7 +49,7 @@ class head(nn.Module):
 	'''
 		Communication between tokens happen here.
 	'''
-	def __init__(self, head_size=8):
+	def __init__(self, head_size):
 		super().__init__()
 		self.key = nn.Linear(embeds_size, head_size, bias=False)
 		self.query = nn.Linear(embeds_size, head_size, bias=False)
@@ -79,7 +79,7 @@ class multihead(nn.Module):
 	'''
 		I have multiple personalities(v), tendencies and needs (q), and valuable things (k) in different groups.
 	'''
-	def __init__(self, num_heads=4, head_size=8):
+	def __init__(self, num_heads, head_size):
 		super().__init__()
 		self.multihead = nn.ModuleList([head(head_size) for _ in range(num_heads)])
 		self.output_linear = nn.Linear(embeds_size, embeds_size)
@@ -95,8 +95,8 @@ class multihead(nn.Module):
 class transformer_block(nn.Module):
 	def __init__(self):
 		super().__init__()
-		self.head_count = embeds_size // num_heads
-		self.n_heads = multihead(num_heads, self.head_count)
+		head_size = embeds_size // num_heads
+		self.n_heads = multihead(num_heads, head_size)
 		self.ffn = nn.Sequential(
 			nn.Linear(embeds_size, 4 * embeds_size),
 			nn.ReLU(),
@@ -176,6 +176,7 @@ def generate(_len=100):
 	return decoded
 
 print(generate())
+
 for epoch in range(iterations):
 	X, y = get_batch()
 	pred, loss = model(X, y)
@@ -183,7 +184,11 @@ for epoch in range(iterations):
 	loss.backward()
 	optimizer.step()
 	if epoch % eval_interval == 0:
+		model.eval()
+		print(generate(200))
+		model.train()
 		print(f"epoch: {loss.item()}")
+
 print(generate(1000))
 
 if input('Would you like to save the model[y|n]?') == 'y':
